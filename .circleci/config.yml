@@ -20,7 +20,7 @@ jobs:
        
       - run:
           name: Deploy application 
-          command: sls offline start
+          command: sls deploy
       
       - save_cache:
           paths:
