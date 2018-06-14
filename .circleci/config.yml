@@ -1,8 +1,12 @@
-version: 2
 jobs:
-   build:
-     docker:
-       - image: circleci/node:8.10
-     steps:
-       - checkout
-       - run: echo "Hello World!"
+  build:
+    steps:
+      - checkout      
+      - run:
+          name: Install Serverless CLI and dependencies
+          command: |
+            sudo npm i -g serverless
+            npm install
+      - run:
+          name: Deploy application 
+          command: sls offline start 
