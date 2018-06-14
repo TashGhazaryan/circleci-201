@@ -5,4 +5,4 @@ jobs:
        - image: circleci/node:6.10
      steps:
        - checkout
-       - run: echo "Very last commit that has to be merged"
+       - run: echo "Hello World"
