@@ -1,0 +1,28 @@
+{
+  "name": "circleci",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TashGhazaryan/circleci-201.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TashGhazaryan/circleci-201/issues"
+  },
+  "homepage": "https://github.com/TashGhazaryan/circleci-201#readme",
+  "dependencies": {
+    "aws-sdk": "^2.257.1",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "serverless-http": "^1.5.5"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.25.4"
+  }
+}
