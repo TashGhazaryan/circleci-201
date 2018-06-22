@@ -7,3 +7,12 @@ app.get('/', function (req, res) {
 })
 
 module.exports.handler = serverless(app);
+
+const obj = {
+    name: "Artash"
+}
+
+function test() {
+    console.log('Test')
+}
+test();

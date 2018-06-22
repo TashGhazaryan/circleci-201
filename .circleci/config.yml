@@ -16,11 +16,6 @@ jobs:
           command: |
             sudo npm i -g serverless
             npm install
-
-       
-      - run:
-          name: Deploy application 
-          command: sudo sls deploy
       
       - save_cache:
           paths:

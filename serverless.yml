@@ -3,6 +3,7 @@ service: my-express-application
 package:
   exclude:
   - .circleci/**
+
 plugins:
   - serverless-offline
 provider:
