@@ -20,10 +20,8 @@ jobs:
       - run:
           name : Test
           command: |
-            if [ "prod" == "prod" ];
-            then echo "is prod"
-            else echo "is not prod"
-            fi
+            echo "Hello
+            World"
       
       - save_cache: 
           paths:
