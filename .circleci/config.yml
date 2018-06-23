@@ -27,4 +27,8 @@ workflows:
   version: 2
   onlybuild:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - dev
