@@ -28,7 +28,7 @@ jobs:
 
       - run:
           name: Clear Envirnment Variables file
-          command: sudo truncate ./angular.env.yml
+          command: sudo truncate -s0 ./angular.env.yml
 
       - run:
           name: Export Env Variables
