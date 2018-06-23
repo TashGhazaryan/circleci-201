@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-cache
+      
+      - run:
+          name: Test env variables
+          command: |
+            touch ./test.yml
+            echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))"
+      
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-cache-{{ checksum "package.json" }}
+
+
+workflows:
+  version: 2
+  onlybuild:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - artash
