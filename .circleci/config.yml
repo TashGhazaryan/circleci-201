@@ -28,7 +28,7 @@ jobs:
 
       - run:
           name: Clear Envirnment Variables file
-          command: >
+          command: sudo >
             ./angular.env.yml
 
       - run:
