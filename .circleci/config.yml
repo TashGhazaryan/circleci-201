@@ -16,7 +16,13 @@ jobs:
           command: |
             touch ./test.yml
             echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))"
-      
+      - run:
+          name : Test
+          command: |
+            echo
+            "Hello World"
+
+
       - save_cache:
           paths:
             - node_modules
