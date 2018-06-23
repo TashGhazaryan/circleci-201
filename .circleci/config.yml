@@ -21,7 +21,10 @@ jobs:
           name : Test
           command: 
             echo
-            "Hello World"
+            "Hello Wo
+            rld
+            from ugly plac
+            e"
       
       - save_cache: 
           paths:
