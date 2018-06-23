@@ -15,7 +15,7 @@ jobs:
           name: Test env variables
           command: |
             touch ./test.yml
-            echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))" >> ./test.yml
+            echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))"
       
       - save_cache:
           paths:
