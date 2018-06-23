@@ -17,7 +17,7 @@ jobs:
             touch ./test.yml
             echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))"
       
-      - save_cache:
+      - save_cache: 
           paths:
             - node_modules
           key: dependencies-cache-{{ checksum "package.json" }}
@@ -31,4 +31,4 @@ workflows:
           filters:
             branches:
               only:
-                - artash
+                - artashes
