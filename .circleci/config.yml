@@ -19,7 +19,7 @@ jobs:
 
       - run:
           name : Test
-          command: 
+          command: |
             if ["prod" == "prod"];
             then echo "is prod"
             else echo "is not prod"
