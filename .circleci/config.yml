@@ -12,10 +12,10 @@ jobs:
             - dependencies-cache
       
       - run:
-          name: Install Serverless CLI and dependencies
+          name: Test env variables
           command: |
-            sudo npm i -g serverless
-            npm install
+            touch ./test.yml
+            echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))" >> ./test.yml
       
       - save_cache:
           paths:
