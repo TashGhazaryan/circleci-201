@@ -18,9 +18,8 @@ jobs:
             echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))"
       - run:
           name : Test
-          command: |
-            echo
-            "Hello World"
+          command: npm 
+            install
 
 
       - save_cache:
@@ -37,4 +36,4 @@ workflows:
           filters:
             branches:
               only:
-                - prod
+                - dev
