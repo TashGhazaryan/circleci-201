@@ -20,11 +20,10 @@ jobs:
       - run:
           name : Test
           command: 
-            echo
-            "Hello Wo
-            rld
-            from ugly plac
-            e"
+            if [${CIRCLE_BRANCH} == "prod"];
+            then echo "is prod"
+            else echo "is not prod"
+            fi
       
       - save_cache: 
           paths:
