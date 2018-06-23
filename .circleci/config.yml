@@ -2,39 +2,149 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:8
+    working_directory: ~/repo
+
     steps:
       - checkout
+
       - restore_cache:
           keys:
-            - dependencies-cache-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - dependencies-cache
-      
-      - run:
-          name: Test env variables
-          command: |
-            touch ./test.yml
-            echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))"
-      - run:
-          name : Test
-          command:
-            npm 
-            install
+          - v1-dependencies-{{ checksum "package-lock.json" }}
+          - v1-dependencies-
 
+      - run:
+          name:  Installing Gulp CLI and Bower
+          command: sudo npm install gulp-cli bower -g
+
+      - run:
+          name: Installing node_modules
+          command: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: dependencies-cache-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
 
+      - run:
+          name: Clear Envirnment Variables file
+          command: >
+            ./angular.env.yml
+
+      - run:
+          name: Export Env Variables
+          command: |
+            touch ./angular.env.yml
+            echo "API_ENDPOINT_PROTOCOL: $(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "API_ENDPOINT_HOSTNAME: $(printenv $(echo API_ENDPOINT_HOSTNAME_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "API_ENDPOINT_PORT: $(printenv $(echo API_ENDPOINT_PORT_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "API_ENDPOINT_PATHNAME: $(printenv $(echo API_ENDPOINT_PATHNAME_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "AUTH0_CLIENT_ID: $(printenv $(echo AUTH0_CLIENT_ID_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "AUTH0_DOMAIN: $(printenv $(echo AUTH0_DOMAIN_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "AUTH0_AUDIENCE: $(printenv $(echo AUTH0_AUDIENCE_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "AUTH0_REDIRECT_URI: $(printenv $(echo AUTH0_REDIRECT_URI_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "MIXPANEL_TOKEN: $(printenv $(echo MIXPANEL_TOKEN_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+            echo "GIPHY_API_KEY: $(printenv $(echo GIPHY_API_KEY_$(echo ${CIRCLE_BRANCH^^})))" >> ./angular.env.yml
+      - run:
+          name: Build Gulp
+          command: gulp prod
+
+      - run:
+          name: Clean Environment Variables
+          command: rm -rf ./angular.env.yml
+
+      - persist_to_workspace:
+          root: "~"
+          paths:
+            - repo
+  test:
+    docker:
+      - image: circleci/node:8
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: "~"
+
+      - run:
+          name: Installing mocha globally
+          command: sudo npm i -g mocha
+
+      - run:
+          name: Testing
+          command: npm test
+
+  deploy:
+    docker:
+      - image: circleci/node:8
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: "~"
+
+      - run:
+         name: Installing AWS CLI
+         command: sudo apt-get install aws-cli
+
+      - run :
+          name : Deploy
+          command: |
+            if [ ${CIRCLE_BRANCH} == "prod" ];
+            then aws s3 sync ./dist s3://admin.myia.co --acl public-read
+            else aws s3 sync ./dist s3://${CIRCLE_BRANCH}-admin.myia.co --acl public-read
+            fi
+
+      - run :
+          name: Clean CloudFront Cache
+          command:
+            aws --profile ${CIRCLE_BRANCH} cloudfront create-invalidation
+            --distribution-id (printenv $(echo DISTRIBUTION_ID_$(echo ${CIRCLE_BRANCH^^})))
+            --paths /index.html /scripts/ */styles/*
 
 workflows:
   version: 2
-  onlybuild:
+  build-test-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - prod
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - dev
+                - staging
+
+  build_and_deploy_prod:
     jobs:
       - build:
           filters:
             branches:
               only:
-                - dev
+                - prod
+      - test:
+          requires:
+            - build
+      - hold:
+          type: approval
+          requires:
+            - test
+      - deploy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - prod
