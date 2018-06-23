@@ -18,7 +18,8 @@ jobs:
             echo "API_ENDPOINT_PROTOCOL=$(printenv $(echo API_ENDPOINT_PROTOCOL_$(echo ${CIRCLE_BRANCH^^})))"
       - run:
           name : Test
-          command: npm 
+          command:
+            npm 
             install
 
 
